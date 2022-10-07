@@ -23,7 +23,7 @@ class UserController{
 
             const accessToken = Token.createAccessToken({id: newUser[0].id, role: newUser[0].role})
 
-            resp.status(200).json({id: newUser[0].id, jwt: accessToken});
+            resp.status(200).json({id: newUser[0].id, jwt: accessToken, name: newUser[0].name});
 
         }catch(err){
             console.log(err)
