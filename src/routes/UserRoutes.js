@@ -5,12 +5,12 @@ const {MiddlewareAuth} = require("../middlewares")
 const router = Router();
 
 router
-    .get("/users", [MiddlewareAuth.validateJWT], UserController.getAllProfessionalUsers)
-    .get("/users/all", UserController.getAllUsers)
-    .get("/users/:id",UserController.getUserById)
-    .post("/register", UserController.registerUser)
-    .post("/login", UserController.loginUser)
-    .put("/users/:id", UserController.updateUser)
-    .delete("/users/:id", UserController.deleteUser)
+    .get("/api/users", [MiddlewareAuth.validateJWT], UserController.getAllProfessionalUsers)
+    .get("/api/users/all", UserController.getAllUsers)
+    .get("/api/users/:id",UserController.getUserById)
+    .post("/api/register", UserController.registerUser)
+    .post("/api/login", UserController.loginUser)
+    .put("/api/users/:id", UserController.updateUser)
+    .delete("/api/users/:id", UserController.deleteUser)
 
 module.exports = router

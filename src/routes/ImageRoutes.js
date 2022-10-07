@@ -5,9 +5,9 @@ const routes = Router();
 
 routes
 .get("/api/images", ImageController.getImages)
-.get("/images/:id", ImageController.getImagesbyUserId)
-.put("/images/:id", ImageController.updateImage)
-.post("/images", ImageController.postImages)
-.delete("image/:id", ImageController.deleteImage)
+.get("/api/images/:id", ImageController.getImagesbyUserId)
+.put("/api/images/:id", ImageController.updateImage)
+.post("/api/images", ImageController.postImages)
+.delete("/api/image/:id", ImageController.deleteImage)
 
 module.exports = routes;
