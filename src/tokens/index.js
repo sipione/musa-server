@@ -12,8 +12,21 @@ class Token{
     }
 
     static validateToken(token){
-        const result = jwt.verify(token, process.env.PRIVATE_KEY_JWT);
-        return result;
+
+        try{
+            const result = jwt.verify(token, process.env.PRIVATE_KEY_JWT);
+            return result;
+        }catch(err){
+            throw new Error("o token não pode ser validado")
+        }
+    }
+
+    static createValidationToken(payload){
+        const validationToken = jwt.sign(payload, process.env.PRIVATE_KEY_JWT, {
+            expiresIn: '1h'
+        })
+
+        return validationToken;
     }
 }
 
