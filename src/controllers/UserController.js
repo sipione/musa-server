@@ -185,7 +185,7 @@ class UserController{
     
             <h2> Não se preocupe, basta ascender ao link abaixo e redefinir sua senha! <h2/>
     
-            <p> http://localhost:3000/#/change/${token}</p>
+            <p> ${process.env.BASE_URL_FRONT}/#/change/${token}</p>
             `;
 
             await transporter.sendMail({
