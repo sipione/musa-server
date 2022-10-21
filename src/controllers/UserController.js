@@ -60,24 +60,18 @@ class UserController{
     }
 
     static async getAllProfessionalUsers(req,resp){
-        const {page, category} = req.headers;
+        const {page, category, mother, city, state} = req.headers;
         const limit = 5;
 
         let where = {
             [Op.and] :[
-                {category:  {[Op.not]:null}},
+                {category:  category == "false" ? {[Op.not]:null} : category,
+                mother:  mother == "false" ? {[Op.or]:[true, false]} : true,
+                city:  city == "false" ? {[Op.not]:null} : city,
+                state:  state == "false" ? {[Op.not]:null}: state},
+                
             ],
             blocked: false,
-        }
-
-        if(category){
-            where = {
-                [Op.and] :[
-                    {category:  {[Op.not]:null}},
-                    {category: category}
-                ],
-                blocked: false,
-            }
         }
 
         try{
@@ -112,7 +106,24 @@ class UserController{
             const response = await database.User.findAll({
                 attributes: { exclude: ['password']}
               });
-            resp.status(200).json({message: response, quantidade})
+            resp.status(200).json({message: response})
+        }catch(err){
+            resp.status(500).json(err)
+        }
+    }
+
+    static async getLocations(req,resp){
+
+        try{
+            const response = await database.User.findAll({
+                attributes: ["city", "state"],
+                where: {
+                    city: {[Op.not]:null}, 
+                    state:{[Op.not]:null}
+                },
+                group: ["state", "city"]
+              });
+            resp.status(200).json(response)
         }catch(err){
             resp.status(500).json(err)
         }
@@ -125,7 +136,7 @@ class UserController{
         try{
             const verifyToken = Token.validateToken(authorization)
             console.log(verifyToken);
-            if(verifyToken.id === id || verifyToken.role !== 'ordinary'){
+            if(verifyToken || verifyToken.role !== 'ordinary'){
                 const user = await database.User.findAll({attributes: { exclude: ['password']}, where: {id}});
                 resp.status(200).json(user[0])
             }else{
@@ -181,11 +192,9 @@ class UserController{
             const token = Token.createValidationToken({id: user[0].id});
 
             const textHtml = `
-            <h1> Olá, esqueceu a senha? </h1>
+            <h1> Esqueceu a senha musa? Tudo certo, acontece!</h1>
     
-            <h2> Não se preocupe, basta ascender ao link abaixo e redefinir sua senha! <h2/>
-    
-            <p> ${process.env.BASE_URL_FRONT}/#/change/${token}</p>
+            <h2> <a href="${process.env.BASE_URL_FRONT}/#/change/${token}">Clica aqui</a> que nós vamos te ajudar a recuperar pra que você continue a fazer bons negócios!<h2/>
             `;
 
             await transporter.sendMail({

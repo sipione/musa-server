@@ -57,7 +57,7 @@ class ImageController{
         const { id } = req.params;
 
         try{
-            await db.Image.destroy({where: {user_id: id}});
+            await db.Image.destroy({where: {id}});
             resp.status(200).json("image deleted with success")
         }catch(err){
             resp.status(500).json(err.message)

@@ -8,6 +8,6 @@ routes
 .get("/api/images/:id", ImageController.getImagesbyUserId)
 .put("/api/images/:id", ImageController.updateImage)
 .post("/api/images", ImageController.postImages)
-.delete("/api/image/:id", ImageController.deleteImage)
+.delete("/api/images/:id", ImageController.deleteImage)
 
 module.exports = routes;
