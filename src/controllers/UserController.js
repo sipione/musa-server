@@ -135,7 +135,7 @@ class UserController{
         const {authorization} = req.headers;
         try{
             const verifyToken = Token.validateToken(authorization)
-            console.log(verifyToken);
+
             if(verifyToken || verifyToken.role !== 'ordinary'){
                 const user = await database.User.findAll({attributes: { exclude: ['password']}, where: {id}});
                 resp.status(200).json(user[0])
