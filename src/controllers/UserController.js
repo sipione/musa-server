@@ -198,7 +198,7 @@ class UserController{
             `;
 
             await transporter.sendMail({
-                from: '"Musa" <noreply@mulheressa.com.br>', 
+                from: '"Fale com a gente" <falecomagente@mulheressa.com.br>', 
                 to: email, 
                 subject: "Esqueci minha senha", // plain text body
                 html: textHtml, // html body
