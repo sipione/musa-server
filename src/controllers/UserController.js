@@ -119,7 +119,8 @@ class UserController{
                 attributes: ["city", "state"],
                 where: {
                     city: {[Op.not]:null}, 
-                    state:{[Op.not]:null}
+                    state:{[Op.not]:null},
+                    category: {[Op.not]:null}
                 },
                 group: ["state", "city"]
               });
