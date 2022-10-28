@@ -34,7 +34,7 @@ class PartnershipController{
 
             await transporter.sendMail({
                 from: '"Site musa" <falecomagente@mulheressa.com.br>', 
-                to: "ricardosipe@gmail.com", //"kasamatos@gmail.com", 
+                to: "kasamatos@gmail.com", 
                 subject: "Novo parceiro à vista", // plain text body
                 html: textHtmlToOwner, // html body
             });
