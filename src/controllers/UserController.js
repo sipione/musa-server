@@ -65,11 +65,12 @@ class UserController{
 
         let where = {
             [Op.and] :[
-                {category:  category == "false" ? {[Op.not]:null} : category,
-                mother:  mother == "false" ? {[Op.or]:[true, false]} : true,
-                city:  city == "false" ? {[Op.not]:null} : city,
-                state:  state == "false" ? {[Op.not]:null}: state},
-                
+                {
+                    category:  category == "false" ? {[Op.not]:null} : category,
+                    mother:  mother == "false" ? {[Op.or]:[true, false, null]} : true,
+                    city:  city == "false" ? {[Op.not]:null} : city,
+                    state:  state == "false" ? {[Op.not]:null}: state
+                },  
             ],
             blocked: false,
         }
@@ -106,7 +107,7 @@ class UserController{
             const response = await database.User.findAll({
                 attributes: { exclude: ['password']}
               });
-            resp.status(200).json({message: response})
+            resp.status(200).json(response)
         }catch(err){
             resp.status(500).json(err)
         }
