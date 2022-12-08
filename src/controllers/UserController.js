@@ -2,6 +2,7 @@ const database = require("../models");
 const Token = require("../tokens");
 const { Op } = require("sequelize");
 const nodemailer = require("nodemailer");
+const { response } = require("express");
 
 class UserController{
 
@@ -91,10 +92,69 @@ class UserController{
         }
     }
 
-    static async getTotal(req,resp){
+    static async getNoProfessionalUsers(req,resp){
+        const {authorization} = req.headers
+        const {page, search} = req.body;
+        const limit = 5;
+        
+        let where = {
+            [Op.and] :[
+                {
+                    category:  null
+                },  
+                {blocked: false}
+            ],
+        }
+        
+        if (search){
+            where = {
+                ...where,
+                name: {[Op.substring]: search}
+            };
+        } 
 
         try{
-            const total = await database.User.count({where: {category: {[Op.not]: null}}});
+            const verifyToken = Token.validateToken(authorization)
+
+            if(verifyToken.role == "admin"){
+                const response = await database.User.findAll({
+                    attributes: { exclude: ['password']},
+                    order:[['createdAt', 'DESC']], 
+                    where, 
+                    limit,
+                    offset: Number(page)*limit
+                });
+    
+                resp.status(200).json(response)
+            }else{
+                throw new Error("É necessário ser um administrador para ter acesso à essas informações")
+            }
+
+            
+        }catch(err){
+            resp.status(500).json(err.message)
+        }
+    }
+
+    static async getTotalOfProfessionals(req,resp){
+
+        try{
+            const total = await database.User.count({where: {category: {[Op.not]: null}, blocked: false}});
+            resp.status(200).json(total);
+        }catch(err){
+            resp.status(500).json(err)
+        }
+    }
+
+    static async getTotalOfUsers(req,resp){
+        const {blocked} = req.body;
+
+        const where = {
+            blocked
+        }
+
+        try{
+            const total = await database.User.count({where});
             resp.status(200).json(total);
         }catch(err){
             resp.status(500).json(err)
@@ -102,12 +162,31 @@ class UserController{
     }
 
     static async getAllUsers(req,resp){
+        const {authorization} = req.headers;
+        const {search, blocked} = req.body;
 
+        let where = {
+            blocked
+        }
+        
+        if (search){
+            where = {
+                ...where,
+                name: {[Op.substring]: search}
+            };
+        } 
+        
         try{
-            const response = await database.User.findAll({
-                attributes: { exclude: ['password']}
-              });
-            resp.status(200).json(response)
+            const verifyToken = Token.validateToken(authorization)
+            if(verifyToken.role === "admin"){
+                const response = await database.User.findAll({
+                    attributes: { exclude: ['password']},
+                    where,
+                  });
+                resp.status(200).json(response)
+            }else{
+                throw new Error("É necessário ser um administrador para acessar todos os usuários")
+            }
         }catch(err){
             resp.status(500).json(err)
         }
@@ -161,6 +240,26 @@ class UserController{
         try{
             await database.User.update(data, {where: {id}})
             resp.status(200).json(`The user with id ${id} was updated`)    
+        }catch(err){
+            resp.status(500).json(err)
+        }
+    }
+
+    static async handleBlockUser(req, resp){
+        const { id } = req.params;
+        const {blocked} = req.body;
+        const {authorization} = req.headers
+        
+        try{
+            const jwtVerified = Token.validateToken(authorization);
+
+            if(jwtVerified.role == "admin"){
+                const updated = await database.User.update({blocked}, {where: {id, role: {[Op.not]: "admin"}}})
+                
+                updated[0] == 1
+                ? resp.status(200).json(`O usuário com id ${id} foi ${blocked ? "bloqueado" : "desbloqueado"}`)
+                : resp.status(200).json("Não foi possível realizar essa ação sobre este usuário")
+            }
         }catch(err){
             resp.status(500).json(err)
         }
