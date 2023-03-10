@@ -62,8 +62,8 @@ class UserController{
     }
 
     static async getAllProfessionalUsers(req,resp){
-        const {page, category, mother, city, state} = req.headers;
-        const limit = 5;
+        const {page, category, mother, city, state, search} = req.headers;
+        //const limit = 5;
 
         let where = {
             [Op.and] :[
@@ -71,7 +71,8 @@ class UserController{
                     category:  category == "false" ? {[Op.not]:null} : category,
                     mother:  mother == "false" ? {[Op.or]:[true, false, null]} : true,
                     city:  city == "false" ? {[Op.not]:null} : city,
-                    state:  state == "false" ? {[Op.not]:null}: state
+                    state:  state == "false" ? {[Op.not]:null}: state,
+                    name: search == "false" ? {[Op.not]:null} : {[Op.substring]: search}
                 },  
             ],
             blocked: false,
@@ -82,8 +83,8 @@ class UserController{
                 attributes: { exclude: ['password']},
                 order:[['createdAt', 'DESC']], 
                 where, 
-                limit,
-                offset: Number(page)*limit
+                //limit,
+                //offset: Number(page)*limit
             });
 
             resp.status(200).json(response)
