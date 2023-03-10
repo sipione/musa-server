@@ -52,7 +52,8 @@ class UserController{
             resp.status(200).json({ 
                 jwt: accessToken, 
                 id: user[0].id,
-                name: user[0].name
+                name: user[0].name,
+                role: user[0].role
             });
             
         }catch(err){
