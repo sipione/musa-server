@@ -7,7 +7,6 @@ const router = Router();
 router
     .get("/api/users",UserController.getAllProfessionalUsers)
     .get("/api/users/total", UserController.getTotalOfProfessionals)
-    .get("/api/users/totals", UserController.getSomeTotals)
     .get("/api/users/locations", UserController.getLocations)
     .get("/api/users/csv",UserController.generateFileCSV)
     .get("/api/users/:id",UserController.getUserById)

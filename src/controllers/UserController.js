@@ -164,17 +164,6 @@ class UserController{
         }
     }
 
-    static async getSomeTotals(req,resp){
-        try{
-            const total = await database.User.findAll({
-                attributes: { exclude: ['password']}
-            });
-            resp.status(200).json(total);
-        }catch(err){
-            resp.status(500).json(err)
-        }
-    }
-
     static async generateFileCSV(req,resp){
         try{
             const total = await database.User.findAll({
@@ -198,8 +187,13 @@ class UserController{
         const {authorization} = req.headers;
         const {search, blocked} = req.body;
 
-        let where = {
-            blocked
+        let where = {};
+
+        if(typeof(blocked) != "undefined"){
+            where ={
+                ...where,
+                blocked
+            }
         }
         
         if (search){
