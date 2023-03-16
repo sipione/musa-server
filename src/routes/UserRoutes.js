@@ -15,5 +15,6 @@ router
     .post("/api/forgotpass",UserController.forgotPasswordEmail)
     .post("/api/changepass", UserController.changePassword)
     .post("/api/register", UserController.registerUser)
+    .post("/api/login", UserController.loginUser)
 
 module.exports = router
