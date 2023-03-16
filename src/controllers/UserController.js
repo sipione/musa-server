@@ -2,9 +2,7 @@ const database = require("../models");
 const Token = require("../tokens");
 const { Op } = require("sequelize");
 const nodemailer = require("nodemailer");
-const xml2js = require('xml2js');
 const json2csv = require('json2csv').Parser;
-const { response } = require("express");
 
 class UserController{
 
@@ -353,6 +351,25 @@ class UserController{
             resp.status(200).json("Senha alterada com sucesso");
         }catch(err){
             resp.status(500).json(err.message)
+        }
+    }
+
+    static async generateFileCSV(req,resp){
+        try{
+            const total = await database.User.findAll({
+                attributes: { exclude: ['password', "about", "profession", "confirmed"]}
+            });
+            const fields = Object.keys(total[0].dataValues);
+            const opts = { fields };
+            const parser = new json2csv(opts);
+            const csv = parser.parse(total);
+
+            resp.set('Content-Type', 'text/csv');
+            resp.status(200).send(csv);
+
+        }catch(err){
+            console.log(err)
+            resp.status(500).json(err)
         }
     }
 }
