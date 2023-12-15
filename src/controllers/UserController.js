@@ -325,7 +325,7 @@ class UserController{
             `;
 
             await transporter.sendMail({
-                from: '"Fale com a gente" <falecomagente@mulheressa.com.br>', 
+                from: `"Fale com a gente, musa" <${process.env.MAIL_USER}>`, 
                 to: email, 
                 subject: "Esqueci minha senha", // plain text body
                 html: textHtml, // html body
